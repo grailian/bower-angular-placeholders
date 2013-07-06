@@ -1,5 +1,4 @@
 angular.module("placeholders", ["placeholders.img","placeholders.txt"]);
-
 /**
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -52,9 +51,12 @@ angular.module( 'placeholders.img', [] )
        * When the provided dimensions change, re-pull the width and height and
        * then redraw the image.
        */
-      scope.$watch('dimensions', function (dimensions) {
-        if (!angular.isDefined( dimensions ) ) return;
-        var matches = scope.dimensions.match( /^(\d+)x(\d+)$/ );
+      scope.$watch('dimensions', function () {
+        if( ! angular.isDefined( scope.dimensions ) ) {
+            return;
+        }
+        var matches = scope.dimensions.match( /^(\d+)x(\d+)$/ ),
+            dataUrl;
         
         if(  ! matches ) {
           console.error("Expected '000x000'. Got " + scope.dimensions);
@@ -68,8 +70,16 @@ angular.module( 'placeholders.img', [] )
         element.prop( "title", scope.dimensions );
         element.prop( "alt", scope.dimensions );
 
-        // And draw the image, setting the returned data URL as the image src.
-        element.prop( 'src', drawImage() );
+        // And draw the image, getting the returned data URL.
+        dataUrl = drawImage();
+
+        // If this is an `img` tag, set the src as the data URL. Else, we set
+        // the CSS `background-image` property to same.
+        if ( element.prop( "tagName" ) === "IMG" ) {
+          element.prop( 'src', dataUrl );
+        } else {
+          element.css( 'background-image', 'url("' + dataUrl + '")' );      
+        }
       });
 
       /**
@@ -371,7 +381,7 @@ angular.module( 'placeholders.txt', [] )
       // Make the sentences into a paragraph and return.
       return "<p>" + sentences + "</p>";
     },
-    createParagraphs: function ( numParagraphs ) {
+    createParagraphs: function ( numParagraphs, numSentences ) {
       var paragraphs = [],
           i = 0;
       
@@ -379,7 +389,7 @@ angular.module( 'placeholders.txt', [] )
       
       // Create the number of paragraphs requested.
       for ( i = 0; i < numParagraphs; i++ ) {
-        paragraphs.push( this.createParagraph() );
+        paragraphs.push( this.createParagraph( numSentences ) );
       }
       
       // Return the paragraphs, concatenated with newlines.
@@ -392,37 +402,55 @@ angular.module( 'placeholders.txt', [] )
   return {
     restrict: "EA",
     controller: [ '$scope', '$element', '$attrs', function ( $scope, $element, $attrs ) {
-      function doSentences( num ) {
-        $element.text(
-          TextGeneratorService.createSentences( parseInt( num, 10 ) )
-        );
-      }
+      var numSentences,
+          numParagraphs;
 
-      function doParagraphs( num ) {
-        $element.html(
-          TextGeneratorService.createParagraphs( parseInt( num, 10 ) )
-        );
-      }
+      // Gets the number of paragraphs or sentences from the service and
+      // populates the DOM node.
+      function populate() {
+        var contents;
 
-      if ( ! $attrs.numSentences && ! $attrs.numParagraphs ) {
-        doParagraphs();
-      }
-
-      $attrs.$observe( 'numSentences', function ( num ) {
-        if ( !angular.isDefined( num ) ) {
-          return;
+        // If p or neither, then get paragraphs. Else, get sentences.
+        if ( numParagraphs || !numSentences ) {
+          contents = TextGeneratorService.createParagraphs( numParagraphs, numSentences );
+        } else {
+          contents = TextGeneratorService.createSentences( numSentences );
         }
 
-        doSentences( num );
-      });
+        $element.html( contents );
+      }
 
-      $attrs.$observe( 'numParagraphs', function ( num ) {
-        if ( !angular.isDefined( num ) ) {
-          return;
+      $attrs.$observe( 'phTxt', function ( val ) {
+        var p_match, s_match;
+
+        // Pull out the matches.
+        p_match = val.match( /(\d+)p/ );
+        s_match = val.match( /(\d+)s/ );
+
+        // If there was a match, store the value. If there wasn't, we set the
+        // value to false to ensure no old value is kept around.
+        if ( p_match !== null ) {
+          numParagraphs = parseInt( p_match[1], 10 );
+        } else {
+          numParagraphs = false;
         }
 
-        doParagraphs( num );
+        // Same for sentences...
+        if ( s_match !== null ) {
+          numSentences = parseInt( s_match[1], 10 );
+        } else {
+          numSentences = false;
+        }
+
+        // And populate everything.
+        populate();
       });
+      
+      // If nothing was passed, the $observe will never run, so we need to trigger
+      // the `populate()` manually.
+      if ( ! $attrs.phTxt ) {
+        populate();
+      }
     }]
   };
 }]);

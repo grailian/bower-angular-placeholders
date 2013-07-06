@@ -8,7 +8,7 @@ available through Bower himself.
 
 As soon as that happens, this will disappear.
 
-For now, use in `component.json` like this
+For now, use in `bower.json` like this
 
 ```javascript
 {
@@ -16,9 +16,15 @@ For now, use in `component.json` like this
   "version": "1.0.0",
   "main": "",
   "dependencies": {
-    "angular-placeholders": "git+https://github.com/Iristyle/bower-angular-placeholders.git#0.0.1"
+    "angular-placeholders": "git+https://github.com/grailian/bower-angular-placeholders.git#0.0.1"
   }
 }
+```
+
+or from terminal
+
+```
+bower install --save git+https://github.com/grailian/bower-angular-placeholders.git#0.0.1
 ```
 
 
