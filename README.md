@@ -24,7 +24,7 @@ For now, use in `bower.json` like this
 or from terminal
 
 ```
-bower install --save git+https://github.com/grailian/bower-angular-placeholders.git#0.0.1
+bower install --save git+https://github.com/grailian/bower-angular-placeholders.git
 ```
 
 
