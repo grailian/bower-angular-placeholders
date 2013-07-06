@@ -8,9 +8,7 @@ available through Bower himself.
 
 As soon as that happens, this will disappear.
 
-For now, use in `bower.json` like this
-
-Install from terminal
+For now, Install from terminal via
 
 ```
 bower install bower-angular-placeholders
