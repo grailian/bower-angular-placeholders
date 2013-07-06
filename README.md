@@ -10,21 +10,10 @@ As soon as that happens, this will disappear.
 
 For now, use in `bower.json` like this
 
-```javascript
-{
-  "name": "ClientSide Dependencies",
-  "version": "1.0.0",
-  "main": "",
-  "dependencies": {
-    "angular-placeholders": "git+https://github.com/grailian/bower-angular-placeholders.git#0.0.1"
-  }
-}
-```
-
-or from terminal
+Install from terminal
 
 ```
-bower install --save git+https://github.com/grailian/bower-angular-placeholders.git
+bower install bower-angular-placeholders
 ```
 
 
