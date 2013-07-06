@@ -1,6 +1,6 @@
 {
   "name": "angular-placeholders",
-  "version": "0.0.1b.0",
+  "version": "0.0.2",
   "main": ["./angular-placeholders.js"],
   "dependencies": {
   }
