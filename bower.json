@@ -1,5 +1,5 @@
 {
-  "name": "angular-placeholders",
+  "name": "bower-angular-placeholders",
   "version": "0.0.2",
   "main": ["./angular-placeholders.js"],
   "dependencies": {
